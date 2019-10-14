@@ -1,0 +1,10 @@
+video
+doc
+./django_tutorial/venv
+__pycache__
+.idea
+./mrms/doc
+./mrms/video
+/enzo/
+backup
+note
