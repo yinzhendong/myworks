@@ -11,7 +11,7 @@ def produce(c):
     c.send(None)
     n = 0
     while n < 5:
-        n = n +1
+        n = n + 1
         print('[PRODUCER] Producing {}...'.format(n))
         r = c.send(n)
         print('[PRODUCER] Consumer return: {}'.format(r))
