@@ -43,7 +43,7 @@ def sql_assemble(name, phone):
     return result
 
 
-rows = sql_assemble(name='吕峒臻', phone='')
+rows = sql_assemble(name='', phone='13623616833')
 for row in rows:
     if row:
         print(row)

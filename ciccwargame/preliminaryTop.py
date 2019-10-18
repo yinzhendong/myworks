@@ -158,7 +158,7 @@ def create_area_top(area, date, count):
 areas = ['全国', '安徽', '北京', '重庆', '河南', '江苏', '山西', '山东', '陕西' ]
 
 # 成绩统计时间
-date = '2019-10-12 14:00'
+date = '2019-10-18 17:00'
 
 for area in areas:
     if area == '全国':

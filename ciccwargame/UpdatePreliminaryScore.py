@@ -70,7 +70,7 @@ def update_person_score(tb_name):
     """
     sql = (
         "UPDATE person as p INNER JOIN score as s "
-        "ON p.phone_conv = s.phone AND LEFT(s.area,2)=LEFT(p.area,2)"
+        "ON p.phone = s.phone AND LEFT(s.area,2)=LEFT(p.area,2)"
         "SET p.first_score = s.first_score, "
         "p.second_score = s.second_score, "
         "p.third_score = s.third_score, "
