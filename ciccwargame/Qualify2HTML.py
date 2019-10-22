@@ -96,14 +96,14 @@ def create_area_top(area, date):
         html.write('<td>' + phone + '</td>')
         html.write('<td>' + first_score + '</td>')
         html.write('<td>' + second_score + '</td>')
-        html.write('<td>' + third_score + '</td>')
-        html.write('<td>' + forth_score + '</td>')
-        html.write('<td>' + fifth_score + '</td>')
+        # html.write('<td>' + third_score + '</td>')
+        # html.write('<td>' + forth_score + '</td>')
+        # html.write('<td>' + fifth_score + '</td>')
         html.write('<td>' + total_score + '</td>')
         html.write('<td>' + average_score + '</td>')
         html.write('<td>' + max_score + '</td>')
         html.write('</tr>')
-        html.write('</table>')
+    html.write('</table>')
 
     # 编队成绩html
     html.write('<h1 align=center>' + area + '--编队赛</h1>')
@@ -155,7 +155,7 @@ def create_area_top(area, date):
 areas = ['北京']
 
 # 成绩统计时间
-date = '2019-10-18 15:00'
+date = '2019-10-22 7:00'
 
 # write html file
 with open('qualify.html', 'w', encoding='utf-8') as html:

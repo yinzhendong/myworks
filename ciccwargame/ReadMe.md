@@ -18,3 +18,10 @@
 3. 执行convert_single.py从forimported表中导出个人赛华戍格式
 4. 执行convert_team.py从forimported表中导出编队赛华戍格式
 
+#### 数据库person、person_all、team表增加字段state
+1. P 初赛
+2. Q 复赛
+3. F 全国赛
+
+#### 复赛的时候还需导入一次名单，这样的话就让赛区从原始导入名单里选出来晋级的编队信息,
+然后更新state状态

@@ -1,7 +1,7 @@
 import mysql.connector
 
 
-from ciccwargame.find_someone import sql_assemble
+from ciccwargame.FindSomeone import sql_assemble
 
 
 cnx = mysql.connector.connect(

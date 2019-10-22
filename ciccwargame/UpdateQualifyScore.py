@@ -46,7 +46,7 @@ def update_person_score(tb_name):
 
 def update_team_score(column):
     sql = (
-        "UPDATE team_qualify t LEFT JOIN person_all p "
+        "UPDATE team_qualify t LEFT JOIN person_all_qualify p "
         "ON t.leader_name=p.name "
         "AND t.leader_phone=p.phone "
         "AND t.leader_id=p.id_card "
