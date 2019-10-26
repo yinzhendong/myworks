@@ -36,6 +36,6 @@ def move_files(src_path, dst_path):
 
 
 
-src_path = '/home/trent/data/tmp/'
+src_path = '/home/trent/data/download/'
 dst_path = '/home/trent/data/temp/'
 move_files(src_path, dst_path)
