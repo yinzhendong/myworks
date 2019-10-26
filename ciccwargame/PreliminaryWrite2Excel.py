@@ -174,5 +174,5 @@ for area in areas:
         continue
     else:
         result = get_area_score(area, date, 5000)
-        write_excel(area, '10月22日-7时', result[0], result[1])
+        write_excel(area, '10月23日-8时', result[0], result[1])
 

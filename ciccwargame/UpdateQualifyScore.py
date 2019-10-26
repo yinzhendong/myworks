@@ -25,6 +25,45 @@ def execute_sql(sql):
         # print(sql + "--> Success!")
 
 
+def update_phone(tb_name, dst_column, src_column):
+    """
+    set the table's phone_conv=phone
+    ex: update person set phone_conv=phone
+    then set table's phone_conv middle 4 replace with *
+    ex: 13912345678 to 139****5678
+    """
+    sql_copy = (
+        "update {} set {}={}".format(tb_name, dst_column, src_column)
+    )
+
+    sql_update = (
+        "UPDATE {} SET {}=REPLACE({},SUBSTR({},4,4),'****')".format(
+            tb_name, dst_column, dst_column, dst_column)
+    )
+
+    for sql in (sql_copy, sql_update):
+        execute_sql(sql)
+
+
+def insert_person(column):
+    """
+    将编队报名team表中不在person_all表中的信息插入person_all表中
+    """
+    sql = (
+        "INSERT INTO person_all_qualify"
+        "(name,sex,id_card,phone,phone_conv,email,dep,area) "
+        "SELECT leader_name,leader_sex,leader_id,leader_phone,"
+        "leader_phone_conv, leader_email,leader_dep,t.area "
+        "FROM team_qualify t LEFT JOIN person_all_qualify pa "
+        "ON t.leader_name=pa.name "
+        "AND t.leader_id=pa.id_card "
+        "AND t.leader_phone=pa.phone "
+        "WHERE pa.name IS NULL "
+        "ORDER BY t.leader_name".replace('leader', column)
+    )
+    execute_sql(sql)
+
+
 def update_person_score(tb_name):
     """
     更新score中的成绩到person_qualify
@@ -56,6 +95,15 @@ def update_team_score(column):
     ).replace('leader', column)
     execute_sql(sql)
 
+# update phone
+update_phone('person_qualify', 'phone_conv', 'phone')
+update_phone('person_all_qualify', 'phone_conv', 'phone')
+update_phone('team_qualify', 'leader_phone_conv', 'leader_phone')
+update_phone('team_qualify', 'member_phone_conv', 'member_phone')
+
+# insert team person to person_all
+insert_person('leader')
+insert_person('member')
 
 # update score
 update_person_score('person_qualify')
