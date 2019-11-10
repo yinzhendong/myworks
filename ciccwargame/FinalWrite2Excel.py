@@ -1,11 +1,11 @@
 import xlwt, mysql.connector
 
 
-def write_excel(area, date, person, team):
+def write_excel(date, person, team):
     """Write to Excel."""
     book = xlwt.Workbook()
-    sheet1 = book.add_sheet('个人赛成绩', cell_overwrite_ok=True)
-    sheet2 = book.add_sheet('编队赛成绩', cell_overwrite_ok=True)
+    sheet1 = book.add_sheet('晋级赛个人赛成绩', cell_overwrite_ok=True)
+    sheet2 = book.add_sheet('晋级赛编队赛成绩', cell_overwrite_ok=True)
 
     person_title = [
         "排位", "所属赛区", "单位", "姓名", "手机号", "第一局成绩", "第二局成绩",
@@ -22,7 +22,6 @@ def write_excel(area, date, person, team):
         sheet2.write(0, i, team_title[i])
 
     # 写rows
-
     row = 1
     for person_record in person:
         cell = 0
@@ -39,10 +38,10 @@ def write_excel(area, date, person, team):
             cell += 1
         row += 1
 
-    book.save('{}赛区成绩-{}.xls'.format(area, date))
+    book.save('全国总决赛晋级赛成绩-{}.xls'.format(date))
 
 
-def get_area_score(area, date, count):
+def get_area_score():
     cnx = mysql.connector.connect(
         user = 'root',
         password = '',
@@ -68,9 +67,9 @@ def get_area_score(area, date, count):
         "average_score as 平均成绩, "
         "max_score as 最高成绩, "
         "dep as 单位 "
-        "FROM person, (select @i:=0)t "
-        "WHERE max_score IS NOT NULL AND area LIKE '{}%' "
-        "ORDER BY 最高成绩 DESC LIMIT {}".format(area, count)
+        "FROM person_final, (select @i:=0)t "
+        "WHERE max_score IS NOT NULL "
+        "ORDER BY 最高成绩 DESC"
     )
 
     # 查询编队赛成绩
@@ -87,10 +86,9 @@ def get_area_score(area, date, count):
         "IFNULL(leader_max_score,0)+IFNULL(member_max_score,0) AS 总成绩, "
         "leader_dep as 队长单位, "
         "member_dep as 队员单位 "
-        "FROM team, (select @i:=0)t "
-        "WHERE  area like '{}%' AND "
-        "(member_max_score IS NOT NULL OR leader_max_score IS NOT NULL) "
-        "ORDER BY 总成绩 DESC LIMIT {}".format(area, count)
+        "FROM team_final, (select @i:=0)t "
+        "WHERE member_max_score IS NOT NULL OR leader_max_score IS NOT NULL "
+        "ORDER BY 总成绩 DESC"
     )
 
     cursor_person_rank.execute(query_person_rank)
@@ -164,16 +162,8 @@ def get_area_score(area, date, count):
 
     return person_records, team_records
 
-# 赛区列表
-# areas = ['全国', '安徽', '北京', '重庆', '河南', '江苏', '山西', '山东', '陕西' ]
-areas = ['全国', '浙江', '吉林', '湖北' ]
-# 成绩统计时间
-date = '2019-10-6 21:00'
+date = '2019年11月11日-21时'
 
-for area in areas:
-    if area == '全国':
-        continue
-    else:
-        result = get_area_score(area, date, 5000)
-        write_excel(area, '11月8日-16时', result[0], result[1])
+result = get_area_score()
+write_excel(date, result[0], result[1])
 

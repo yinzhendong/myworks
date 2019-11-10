@@ -29,7 +29,7 @@ def set_team_num():
     cursor.execute(select_team_name)
     team_names = cursor.fetchall()
 
-    num = 1000
+    num = 1001
     for team_name in team_names:
         team_name = team_name[0]
         set_num_query = (

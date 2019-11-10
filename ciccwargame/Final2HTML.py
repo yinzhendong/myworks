@@ -1,8 +1,7 @@
 import mysql.connector
-from ciccwargame.CountryTop import create_country_top
 
 
-def create_area_top(area, date, count):
+def create_country_top(date):
     cnx = mysql.connector.connect(
         user = 'root',
         password = '',
@@ -10,11 +9,10 @@ def create_area_top(area, date, count):
         database = 'ciccwargame',
     )
 
-    cursor_person_rank = cnx.cursor(buffered=True)
-    cursor_team_rank= cnx.cursor(buffered=True)
+    cursor_country_person_rank = cnx.cursor(buffered=True)
+    cursor_country_team_rank = cnx.cursor(buffered=True)
 
-    # 查询个人赛成绩
-    query_person_rank = (
+    query_country_person_rank = (
         "SELECT  (@i:=@i+1)排位, "
         "area as 所属赛区, "
         "name as 姓名, "
@@ -27,13 +25,11 @@ def create_area_top(area, date, count):
         "total_score as 总成绩, "
         "average_score as 平均成绩, "
         "max_score as 最高成绩 "
-        "FROM person, (select @i:=0)t "
-        "WHERE max_score IS NOT NULL AND area LIKE '{}%' "
-        "ORDER BY 最高成绩 DESC LIMIT {}".format(area, count)
+        "FROM person_final, (select @i:=0)t WHERE max_score IS NOT NULL "
+        "ORDER BY 最高成绩 DESC"
     )
 
-    # 查询编队赛成绩
-    query_team_rank = (
+    query_country_team_rank = (
         "SELECT (@i:=@i+1)排位, "
         "area as 所属赛区, "
         "team_name as 编队名称, "
@@ -44,26 +40,34 @@ def create_area_top(area, date, count):
         "member_phone_conv as 队员手机号, "
         "member_max_score as 队员最高成绩, "
         "IFNULL(leader_max_score,0)+IFNULL(member_max_score,0) AS 总成绩 "
-        "FROM team, (select @i:=0)t "
-        "WHERE  area like '{}%' AND "
-        "(member_max_score IS NOT NULL OR leader_max_score IS NOT NULL) "
-        "ORDER BY 总成绩 DESC LIMIT {}".format(area, count)
+        "FROM team_final, (select @i:=0)t "
+        "WHERE  member_max_score IS NOT NULL OR leader_max_score IS NOT NULL "
+        "ORDER BY 总成绩 DESC"
     )
 
-    cursor_person_rank.execute(query_person_rank)
-    cursor_team_rank.execute(query_team_rank)
+    cursor_country_person_rank.execute(query_country_person_rank)
+    cursor_country_team_rank.execute(query_country_team_rank)
 
-    results_person_rank = cursor_person_rank.fetchall()
-    results_team_rank = cursor_team_rank.fetchall()
+    results_country_person_rank = cursor_country_person_rank.fetchall()
+    results_country_team_rank = cursor_country_team_rank.fetchall()
 
-    # 个人成绩html
-    with open('top.html', 'a', encoding='utf-8') as html:
+    # 个人赛成绩
+    with open('final.html', 'w',encoding='utf-8') as html:
+        html.write('<!DOCtype HTML>'
+                   '<meta http-equiv="Content-Type" '
+                   'content="text/html; charset=UTF-8" />'
+                   '<head>'
+                   '<link href="./mystyle.css" rel="stylesheet" '
+                   'type="text/css"/>'
+                   '<title>初赛成绩排名</title>'
+                   '<head>'
+                   '<body>')
         html.write('<br><hr />')
-        html.write('<h1 align=center>' + area + '--个人赛' + str(count) + '强</h1>')
-        html.write('<h2 align=center>成绩统计时间：'+date+'</h2>')
+        html.write('<h1 align=center>全国总决赛晋级赛--个人赛成绩</h1>')
+        html.write('<h2 align=center>成绩统计时间：' + date + '</h2>')
         html.write('<table border=1 align=center>')
         html.write('<tr align=center>'
-                   '<th>赛区排名</th>'
+                   '<th>全国排名</th>'
                    '<th>所属赛区</th>'
                    '<th>姓名</th>'
                    '<th>手机号</th>'
@@ -76,7 +80,7 @@ def create_area_top(area, date, count):
                    '<th>平均成绩</th>'
                    '<th>最高成绩</th>'
                    '</tr>')
-        for row in results_person_rank:
+        for row in results_country_person_rank:
             position = str(int(row[0]))
             area = row[1]
             name = row[2]
@@ -107,12 +111,12 @@ def create_area_top(area, date, count):
             html.write('</tr>')
         html.write('</table>')
 
-        # 编队成绩html
-        html.write('<h1 align=center>' + area + '--编队赛' + str(count) + '强</h1>')
+        # 编队赛成绩
+        html.write('<h1 align=center>全国总决赛晋级赛--编队赛成绩</h1>')
         html.write('<h2 align=center>成绩统计时间：' + date + '</h2>')
         html.write('<table border=1 align=center>')
         html.write('<tr align=center>'
-                   '<th>赛区排名</th>'
+                   '<th>全国排名</th>'
                    '<th>所属赛区</th>'
                    '<th>编队名称</th>'
                    '<th>队长姓名</th>'
@@ -123,7 +127,7 @@ def create_area_top(area, date, count):
                    '<th>队员最高成绩</th>'
                    '<th>总成绩</th>'
                    '</tr>')
-        for row in results_team_rank:
+        for row in results_country_team_rank:
             position = str(int(row[0]))
             area = row[1]
             team_name = row[2]
@@ -149,24 +153,8 @@ def create_area_top(area, date, count):
             html.write('<td>' + team_total_score + '</td>')
             html.write('</tr>')
         html.write('</table>')
-        html.write('</body>')
-
     html.close()
     cnx.close()
 
-# 赛区列表
-areas = [
-    '全国', '湖北', '广西', '浙江', '吉林', '安徽', '北京', '重庆', '河南', '江苏', '山西',
-    '山东', '陕西',
-]
-
-# 成绩统计时间
-date = '2019-11-8 16:00'
-
-for area in areas:
-    if area == '全国':
-        # 生成全国前num的个人赛很编队赛成绩页面
-        create_country_top(date, 16)
-    else:
-        # 生成area前num的个人赛很编队赛成绩页面
-        create_area_top(area, date, 16)
+date = '2019-11-11 16:00'
+create_country_top(date)

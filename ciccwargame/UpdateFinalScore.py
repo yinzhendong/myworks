@@ -7,7 +7,6 @@ cnx = mysql.connector.connect(
     host = '127.0.0.1',
     database = 'ciccwargame',
 )
-
 cursor = cnx.cursor()
 
 
@@ -50,13 +49,13 @@ def insert_person(column):
     将编队报名team表中不在person_all表中的信息插入person_all表中
     """
     sql = (
-        "INSERT INTO person_all"
+        "INSERT INTO person_all_final"
         "(name,sex,id_card,phone,phone_conv,email,dep,area) "
         "SELECT leader_name,leader_sex,leader_id,leader_phone,"
         "leader_phone_conv, leader_email,leader_dep,t.area "
-        "FROM team t LEFT JOIN person_all pa "
+        "FROM team_final t LEFT JOIN person_all_final pa "
         "ON t.leader_name=pa.name "
-        "AND t.leader_id=pa.id_card "
+        # "AND t.leader_id=pa.id_card "
         "AND t.leader_phone=pa.phone "
         "WHERE pa.name IS NULL "
         "ORDER BY t.leader_name".replace('leader', column)
@@ -69,7 +68,7 @@ def update_person_score(tb_name):
     更新score中的成绩到person
     """
     sql = (
-        "UPDATE person as p INNER JOIN score as s "
+        "UPDATE person_final as p INNER JOIN score as s "
         "ON p.phone = s.phone AND LEFT(s.area,2)=LEFT(p.area,2)"
         "SET p.first_score = s.first_score, "
         "p.second_score = s.second_score, "
@@ -79,13 +78,13 @@ def update_person_score(tb_name):
         "p.max_score = s.max_score, "
         "p.total_score = s.total_score, "
         "p.average_score = s.average_score"
-    ).replace('person', tb_name)
+    ).replace('person_final', tb_name)
     execute_sql(sql)
 
 
 def update_team_score(column):
     sql = (
-        "UPDATE team t LEFT JOIN person_all p "
+        "UPDATE team_final t LEFT JOIN person_all_final p "
         "ON t.leader_name=p.name "
         "AND t.leader_phone=p.phone "
         # "AND t.leader_id=p.id_card "
@@ -96,21 +95,24 @@ def update_team_score(column):
     execute_sql(sql)
 
 
-# update phone
-update_phone('person', 'phone_conv', 'phone')
-update_phone('person_all', 'phone_conv', 'phone')
-update_phone('team', 'leader_phone_conv', 'leader_phone')
-update_phone('team', 'member_phone_conv', 'member_phone')
+def main():
+    # update phone
+    update_phone('person_final', 'phone_conv', 'phone')
+    update_phone('person_all_final', 'phone_conv', 'phone')
+    update_phone('team_final', 'leader_phone_conv', 'leader_phone')
+    update_phone('team_final', 'member_phone_conv', 'member_phone')
 
-# insert team person to person_all
-insert_person('leader')
-insert_person('member')
+    # insert team person to person_all
+    insert_person('leader')
+    insert_person('member')
 
-# update score
-update_person_score('person')
-update_person_score('person_all')
-update_team_score('leader')
-update_team_score('member')
+    # update score
+    # update_person_score('person_final')
+    # update_person_score('person_all_final')
+    # update_team_score('leader')
+    # update_team_score('member')
+
+main()
 
 cursor.close()
 cnx.close()
