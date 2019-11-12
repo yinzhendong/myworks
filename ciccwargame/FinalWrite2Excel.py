@@ -162,7 +162,7 @@ def get_area_score():
 
     return person_records, team_records
 
-date = '2019年11月11日-21时'
+date = '2019年11月12日-8时'
 
 result = get_area_score()
 write_excel(date, result[0], result[1])

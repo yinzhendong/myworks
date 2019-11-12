@@ -69,7 +69,7 @@ def update_person_score(tb_name):
     """
     sql = (
         "UPDATE person_final as p INNER JOIN score as s "
-        "ON p.phone = s.phone AND LEFT(s.area,2)=LEFT(p.area,2)"
+        "ON p.phone = s.phone "
         "SET p.first_score = s.first_score, "
         "p.second_score = s.second_score, "
         "p.third_score = s.third_score, "
@@ -107,10 +107,10 @@ def main():
     insert_person('member')
 
     # update score
-    # update_person_score('person_final')
-    # update_person_score('person_all_final')
-    # update_team_score('leader')
-    # update_team_score('member')
+    update_person_score('person_final')
+    update_person_score('person_all_final')
+    update_team_score('leader')
+    update_team_score('member')
 
 main()
 
