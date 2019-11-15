@@ -166,7 +166,7 @@ def get_area_score(area, date, count):
 
 # 赛区列表
 # areas = ['全国', '安徽', '北京', '重庆', '河南', '江苏', '山西', '山东', '陕西' ]
-areas = ['全国', '吉林', '湖北' ]
+areas = ['全国', '吉林']
 # 成绩统计时间
 date = '2019-10-6 21:00'
 
@@ -175,5 +175,5 @@ for area in areas:
         continue
     else:
         result = get_area_score(area, date, 5000)
-        write_excel(area, '11月12日-8时', result[0], result[1])
+        write_excel(area, '11月15日-8时', result[0], result[1])
 

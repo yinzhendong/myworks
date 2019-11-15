@@ -158,5 +158,5 @@ def create_final_qualified(date):
     html.close()
     cnx.close()
 
-date = '2019-11-12 8:00'
+date = '2019-11-15 8:00'
 create_final_qualified(date)
