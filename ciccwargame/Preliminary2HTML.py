@@ -161,7 +161,7 @@ areas = [
 ]
 
 # 成绩统计时间
-date = '2019-11-8 16:00'
+date = '2019-11-13 8:00'
 
 for area in areas:
     if area == '全国':

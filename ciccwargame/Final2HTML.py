@@ -1,7 +1,7 @@
 import mysql.connector
 
 
-def create_country_top(date):
+def create_final_qualified(date):
     cnx = mysql.connector.connect(
         user = 'root',
         password = '',
@@ -9,10 +9,10 @@ def create_country_top(date):
         database = 'ciccwargame',
     )
 
-    cursor_country_person_rank = cnx.cursor(buffered=True)
-    cursor_country_team_rank = cnx.cursor(buffered=True)
+    cursor_qualified_person = cnx.cursor(buffered=True)
+    cursor_qualified_team = cnx.cursor(buffered=True)
 
-    query_country_person_rank = (
+    query_qualified_person = (
         "SELECT  (@i:=@i+1)排位, "
         "area as 所属赛区, "
         "name as 姓名, "
@@ -25,11 +25,12 @@ def create_country_top(date):
         "total_score as 总成绩, "
         "average_score as 平均成绩, "
         "max_score as 最高成绩 "
-        "FROM person_final, (select @i:=0)t WHERE max_score IS NOT NULL "
+        "FROM person_final, (select @i:=0)t "
+        "WHERE max_score IS NOT NULL and (state='' or state is null)"
         "ORDER BY 最高成绩 DESC"
     )
 
-    query_country_team_rank = (
+    query_qualified_team = (
         "SELECT (@i:=@i+1)排位, "
         "area as 所属赛区, "
         "team_name as 编队名称, "
@@ -41,15 +42,16 @@ def create_country_top(date):
         "member_max_score as 队员最高成绩, "
         "IFNULL(leader_max_score,0)+IFNULL(member_max_score,0) AS 总成绩 "
         "FROM team_final, (select @i:=0)t "
-        "WHERE  member_max_score IS NOT NULL OR leader_max_score IS NOT NULL "
+        "WHERE (member_max_score IS NOT NULL OR leader_max_score IS NOT NULL) "
+        "and (state='' or state is null)"
         "ORDER BY 总成绩 DESC"
     )
 
-    cursor_country_person_rank.execute(query_country_person_rank)
-    cursor_country_team_rank.execute(query_country_team_rank)
+    cursor_qualified_person.execute(query_qualified_person)
+    cursor_qualified_team.execute(query_qualified_team)
 
-    results_country_person_rank = cursor_country_person_rank.fetchall()
-    results_country_team_rank = cursor_country_team_rank.fetchall()
+    results_qualified_persons = cursor_qualified_person.fetchall()
+    results_country_teams = cursor_qualified_team.fetchall()
 
     # 个人赛成绩
     with open('final.html', 'w',encoding='utf-8') as html:
@@ -59,7 +61,7 @@ def create_country_top(date):
                    '<head>'
                    '<link href="./mystyle.css" rel="stylesheet" '
                    'type="text/css"/>'
-                   '<title>初赛成绩排名</title>'
+                   '<title>全国晋级赛成绩排名</title>'
                    '<head>'
                    '<body>')
         html.write('<br><hr />')
@@ -67,7 +69,7 @@ def create_country_top(date):
         html.write('<h2 align=center>成绩统计时间：' + date + '</h2>')
         html.write('<table border=1 align=center>')
         html.write('<tr align=center>'
-                   '<th>全国排名</th>'
+                   '<th>排名</th>'
                    '<th>所属赛区</th>'
                    '<th>姓名</th>'
                    '<th>手机号</th>'
@@ -80,7 +82,7 @@ def create_country_top(date):
                    '<th>平均成绩</th>'
                    '<th>最高成绩</th>'
                    '</tr>')
-        for row in results_country_person_rank:
+        for row in results_qualified_persons:
             position = str(int(row[0]))
             area = row[1]
             name = row[2]
@@ -116,7 +118,7 @@ def create_country_top(date):
         html.write('<h2 align=center>成绩统计时间：' + date + '</h2>')
         html.write('<table border=1 align=center>')
         html.write('<tr align=center>'
-                   '<th>全国排名</th>'
+                   '<th>排名</th>'
                    '<th>所属赛区</th>'
                    '<th>编队名称</th>'
                    '<th>队长姓名</th>'
@@ -127,7 +129,7 @@ def create_country_top(date):
                    '<th>队员最高成绩</th>'
                    '<th>总成绩</th>'
                    '</tr>')
-        for row in results_country_team_rank:
+        for row in results_country_teams:
             position = str(int(row[0]))
             area = row[1]
             team_name = row[2]
@@ -156,5 +158,5 @@ def create_country_top(date):
     html.close()
     cnx.close()
 
-date = '2019-11-11 16:00'
-create_country_top(date)
+date = '2019-11-15 8:00'
+create_final_qualified(date)

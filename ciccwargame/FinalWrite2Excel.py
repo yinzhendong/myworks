@@ -68,7 +68,7 @@ def get_area_score():
         "max_score as 最高成绩, "
         "dep as 单位 "
         "FROM person_final, (select @i:=0)t "
-        "WHERE max_score IS NOT NULL "
+        "WHERE max_score IS NOT NULL and (state='' or state is null) "
         "ORDER BY 最高成绩 DESC"
     )
 
@@ -87,7 +87,8 @@ def get_area_score():
         "leader_dep as 队长单位, "
         "member_dep as 队员单位 "
         "FROM team_final, (select @i:=0)t "
-        "WHERE member_max_score IS NOT NULL OR leader_max_score IS NOT NULL "
+        "WHERE (member_max_score IS NOT NULL OR leader_max_score IS NOT NULL)"
+        "and (state='' or state is null) "
         "ORDER BY 总成绩 DESC"
     )
 
@@ -162,7 +163,7 @@ def get_area_score():
 
     return person_records, team_records
 
-date = '2019年11月11日-21时'
+date = '2019年11月13日-8时'
 
 result = get_area_score()
 write_excel(date, result[0], result[1])
