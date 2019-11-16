@@ -58,7 +58,7 @@ def get_area_score(area, date, count):
         "SELECT  (@i:=@i+1)排位, "
         "area as 所属赛区, "
         "name as 姓名, "
-        "phone_conv as 手机号, "
+        "phone as 手机号, "
         "first_score as 第一局成绩, "
         "second_score as 第二局成绩, "
         "third_score as 第三局成绩, "
@@ -79,10 +79,10 @@ def get_area_score(area, date, count):
         "area as 所属赛区, "
         "team_name as 编队名称, "
         "leader_name as 队长姓名, "
-        "leader_phone_conv as 队长手机号, "
+        "leader_phone as 队长手机号, "
         "leader_max_score as 队长最高成绩, "
         "member_name as 队员姓名, "
-        "member_phone_conv as 队员手机号, "
+        "member_phone as 队员手机号, "
         "member_max_score as 队员最高成绩, "
         "IFNULL(leader_max_score,0)+IFNULL(member_max_score,0) AS 总成绩, "
         "leader_dep as 队长单位, "
@@ -175,5 +175,5 @@ for area in areas:
         continue
     else:
         result = get_area_score(area, date, 5000)
-        write_excel(area, '11月15日-8时', result[0], result[1])
+        write_excel(area, '11月15日-19时', result[0], result[1])
 
