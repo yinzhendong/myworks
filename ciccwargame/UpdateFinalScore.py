@@ -1,4 +1,5 @@
 import mysql.connector
+from ciccwargame.Final2HTML import create_final_qualified
 
 
 cnx = mysql.connector.connect(
@@ -111,6 +112,10 @@ def main():
     update_person_score('person_all_final')
     update_team_score('leader')
     update_team_score('member')
+
+    # create final score HTML
+    date = '2019-11-19 8:00'
+    create_final_qualified(date)
 
 main()
 
