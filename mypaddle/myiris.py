@@ -1,50 +1,33 @@
-import numpy as np
-from matplotlib import colors
-from sklearn import svm
-from sklearn.svm import SVC
-from sklearn import model_selection
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-import os
+from sklearn.datasets import load_iris
+
+iris_dataset = load_iris()
+print('Keys of iris_dataset:\n', iris_dataset.keys())
+print(iris_dataset['DESCR'][:193] + '\n...')
+print('Target names:', iris_dataset['target_names'])
+print('Feature name:\n', iris_dataset['feature_names'])
+print('Type of data:', type(iris_dataset['data']))
+print('Shape of data:', iris_dataset['data'].shape)
+print('First five rows of data:\n', iris_dataset['data'][:5])
+print('Type of target:', type(iris_dataset['target']))
+print('Shape of target:', iris_dataset['target'].shape)
+print('Target:\n', iris_dataset['target'])
 
 
-def iris_type(s):
-    it = {b'Iris-setosa': 0, b'Iris-versicolor': 1, b'Iris-virginica': 2}
-    return it[s]
-
-
-data_path = os.path.join(os.getcwd(), 'iris.data')
-data = np.loadtxt(
-    data_path, dtype=float, delimiter=',', converters={4:iris_type}
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(
+    iris_dataset['data'], iris_dataset['target'], random_state=0
 )
-x, y = np.split(data, (4,), axis=1)
-x = x[:, 0:2]
-print(x)
+print('X_train shape:', X_train.shape)
+print('y_train shape:', y_train.shape)
 
-x_train, x_test, y_train, y_test = model_selection.train_test_split(
-    x, y, random_state=1, test_size=0.3
-)
-x = np.linspace(0, 2, 100)
-plt.plot(x, x, label='linear')
-plt.plot(x, x**2, label='quadratic')
-plt.plot(x, x**3, label='cubic')
-plt.xlabel('x label')
-plt.ylabel('y label')
-plt.title("Simple Plot")
-plt.legend()
-plt.show()
+print('X_test shape:', X_test.shape)
+print('y_test shape:', y_test.shape)
 
-import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-data = np.random.randint(0, 255, size=[40, 40, 40])
-x, y, z = data[0], data[1], data[2]
-ax = plt.subplot(111, projection='3d') # 创建一个三维的绘图工程
-# 将数据点分成三部分画，在颜色上有区分度
-ax.scatter(x[:10], y[:10], z[:10], c='y') # 绘制数据点
-ax.scatter(x[10:20], y[10:20], z[10:20], c='r')
-ax.scatter(x[30:40], y[30:40], z[30:40], c='g')
-ax.set_zlabel('Z') # 坐标轴
-ax.set_ylabel('Y')
-ax.set_xlabel('X')
-plt.show()
+import pandas as pd
+import mglearn
+import joblib
+
+iris_dataframe = pd.DataFrame(X_train, columns=iris_dataset.feature_names)
+pd.plotting.scatter_matrix(iris_dataframe, c=y_train, figsize=(15, 15),
+                           marker='o', hist_kwds={'bins': 20}, s=60, alpha=.8,
+                           cmap=mglearn.cm3)

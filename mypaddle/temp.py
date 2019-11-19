@@ -22,3 +22,35 @@ x = np.linspace(-10, 10, 100)
 y = np.sin(x)
 plt.plot(x, y, marker='x')
 plt.show()
+
+import pandas as pd
+from IPython.display import display
+
+data = {
+        'Name': ["john", "Anna", "Peter", "Linda"],
+        'Location': ["New York", "Paris", 'Berlin', 'London'],
+        'Age': [24, 13, 53, 33]
+}
+data_pandas = pd.DataFrame(data)
+display(data_pandas)
+
+import sys
+print('Python version:', sys.version)
+
+import pandas as pd
+print('pandas version:', pd.__version__)
+
+import matplotlib
+print('matplotlib version:', matplotlib.__version__)
+
+import numpy as np
+print('numpy version:', np.__version__)
+
+import scipy as sp
+print('scipy version:', sp.__version__)
+
+import IPython
+print('Ipython version:', IPython.__version__)
+
+import sklearn
+print('scikit-learn version:', sklearn.__version__)
