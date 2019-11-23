@@ -25,9 +25,13 @@ print('y_test shape:', y_test.shape)
 
 import pandas as pd
 import mglearn
-import joblib
 
-iris_dataframe = pd.DataFrame(X_train, columns=iris_dataset.feature_names)
-pd.plotting.scatter_matrix(iris_dataframe, c=y_train, figsize=(15, 15),
-                           marker='o', hist_kwds={'bins': 20}, s=60, alpha=.8,
-                           cmap=mglearn.cm3)
+# iris_dataframe = pd.DataFrame(X_train, columns=iris_dataset.feature_names)
+# pd.plotting.scatter_matrix(iris_dataframe, c=y_train, figsize=(15, 15),
+#                            marker='o', hist_kwds={'bins': 20}, s=60, alpha=.8,
+#                            cmap=mglearn.cm3)
+
+
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=1)
+knn.fit(X_train, y_train)
