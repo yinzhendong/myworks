@@ -114,7 +114,7 @@ def main():
     update_team_score('member')
 
     # create final score HTML
-    date = '2019-11-23 8:00'
+    date = '2019-11-24 8:00'
     create_final_qualified(date)
 
 main()
