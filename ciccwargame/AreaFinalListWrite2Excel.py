@@ -1,19 +1,19 @@
 import xlwt, mysql.connector
 
 
-def write_excel(date, person, team):
+def write_excel(area, person, team):
     """Write to Excel."""
     book = xlwt.Workbook()
-    sheet1 = book.add_sheet('晋级赛个人赛成绩', cell_overwrite_ok=True)
-    sheet2 = book.add_sheet('晋级赛编队赛成绩', cell_overwrite_ok=True)
+    sheet1 = book.add_sheet('个人赛名单', cell_overwrite_ok=True)
+    sheet2 = book.add_sheet('编队赛名单', cell_overwrite_ok=True)
 
     person_title = [
-        "排位", "所属赛区", "单位", "姓名", "手机号", "第一局成绩", "第二局成绩",
-        "第三局成绩", "第四局成绩", "第五局成绩", "总成绩", "平均成绩", "最高成绩"
+        "序号", "所属赛区", "单位", "姓名", "手机号", "晋级赛最高成绩", "晋级方式"
     ]
     team_title = [
-        "排位", "所属赛区", "编队名称", "队长单位", "队长姓名", "队长手机号",
-        "队长最高成绩", "队员单位", "队员姓名", "队员手机号", "队员最高成绩", "总成绩"
+        "序号", "所属赛区", "编队名称", "队长单位", "队长姓名", "队长手机号",
+        "队长晋级赛最高成绩", "队员单位", "队员姓名", "队员手机号", "队员晋级赛最高成绩",
+        "总成绩", "晋级方式"
     ]
     #写title
     for i in range(0, len(person_title)):
@@ -38,10 +38,10 @@ def write_excel(date, person, team):
             cell += 1
         row += 1
 
-    book.save('全国总决赛晋级赛成绩-{}.xls'.format(date))
+    book.save('全国总决赛名单-' + area + '.xls')
 
 
-def get_area_score():
+def get_area_final_list(area):
     cnx = mysql.connector.connect(
         user = 'root',
         password = '',
@@ -58,18 +58,12 @@ def get_area_score():
         "area as 所属赛区, "
         "name as 姓名, "
         "phone as 手机号, "
-        "first_score as 第一局成绩, "
-        "second_score as 第二局成绩, "
-        "third_score as 第三局成绩, "
-        "forth_score as 第四局成绩, "
-        "fifth_score as 第五局成绩, "
-        "total_score as 总成绩, "
-        "average_score as 平均成绩, "
-        "max_score as 最高成绩, "
-        "dep as 单位 "
+        "max_score as 晋级赛最高成绩, "
+        "dep as 单位, "
+        "state as 晋级方式 "
         "FROM person_final, (select @i:=0)t "
-        "WHERE max_score IS NOT NULL and (state='' or state is null or state='qualified') "
-        "ORDER BY 最高成绩 DESC"
+        "WHERE state='recommend' and area like '{}%' "
+        "ORDER BY state desc, max_score desc".format(area)
     )
 
     # 查询编队赛成绩
@@ -79,17 +73,17 @@ def get_area_score():
         "team_name as 编队名称, "
         "leader_name as 队长姓名, "
         "leader_phone as 队长手机号, "
-        "leader_max_score as 队长最高成绩, "
+        "leader_max_score as 队长晋级赛最高成绩, "
         "member_name as 队员姓名, "
         "member_phone as 队员手机号, "
-        "member_max_score as 队员最高成绩, "
+        "member_max_score as 队员晋级赛最高成绩, "
         "IFNULL(leader_max_score,0)+IFNULL(member_max_score,0) AS 总成绩, "
         "leader_dep as 队长单位, "
-        "member_dep as 队员单位 "
+        "member_dep as 队员单位, "
+        "state as 晋级方式 "
         "FROM team_final, (select @i:=0)t "
-        "WHERE (member_max_score IS NOT NULL OR leader_max_score IS NOT NULL)"
-        "and (state='' or state is null or state='qualified') "
-        "ORDER BY 总成绩 DESC"
+        "WHERE state='recommend' and area like '{}%' "
+        "ORDER BY state desc, 总成绩 DESC".format(area)
     )
 
     cursor_person_rank.execute(query_person_rank)
@@ -104,28 +98,16 @@ def get_area_score():
         area = row[1]
         name = row[2]
         phone = row[3]
-        first_score = str(row[4]).replace('None', '')
-        second_score = str(row[5]).replace('None', '')
-        third_score = str(row[6]).replace('None', '')
-        forth_score = str(row[7]).replace('None', '')
-        fifth_score = str(row[8]).replace('None', '')
-        total_score = str(row[9])
-        average_score = str(int(row[10]))
-        max_score = str(row[11])
-        dep = row[12]
+        max_score = str(row[4])
+        dep = row[5]
+        state = row[6]
         person_record.append(position)
         person_record.append(area)
         person_record.append(dep)
         person_record.append(name)
         person_record.append(phone)
-        person_record.append(first_score)
-        person_record.append(second_score)
-        person_record.append(third_score)
-        person_record.append(forth_score)
-        person_record.append(fifth_score)
-        person_record.append(total_score)
-        person_record.append(average_score)
         person_record.append(max_score)
+        person_record.append(state)
         person_records.append(person_record)
 
     team_records = []
@@ -143,6 +125,7 @@ def get_area_score():
         team_total_score = str(row[9])
         leader_dep = row[10]
         member_dep = row[11]
+        state = row[12]
         team_record.append(position)
         team_record.append(area)
         team_record.append(team_name)
@@ -155,6 +138,7 @@ def get_area_score():
         team_record.append(member_phone)
         team_record.append(member_max_score)
         team_record.append(team_total_score)
+        team_record.append(state)
         team_records.append(team_record)
 
     cursor_person_rank.close()
@@ -163,8 +147,12 @@ def get_area_score():
 
     return person_records, team_records
 
-date = '2019年11月30日-24时'
 
-result = get_area_score()
-write_excel(date, result[0], result[1])
+def main():
+    areas = ['安徽', '北京', '重庆', '河南', '江苏', '山西', '山东', '陕西', '湖北',
+             '湖南', '浙江', '吉林', '广西', ]
+    for area in areas:
+        result = get_area_final_list(area)
+        write_excel(area, result[0], result[1])
 
+main()
