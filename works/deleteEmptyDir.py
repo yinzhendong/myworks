@@ -25,6 +25,6 @@ def delete_empty_directories(path):
     logging.info("There is no empty directories in --> {}".format(path))
     print("There is no empty directories in --> {}".format(path))
 
-path = "/home/trent/data/download/"
+path = "/home/trent/data/tmp1/"
 
 delete_empty_directories(path)

@@ -34,8 +34,6 @@ def move_files(src_path, dst_path):
                 shutil.move(src_abs_file, rename_dst_abs_file)
 
 
-
-
 src_path = '/home/trent/data/download/'
 dst_path = '/home/trent/data/tmp/'
 move_files(src_path, dst_path)
