@@ -14,8 +14,9 @@ def renameFiles(path, prefix):
             os.rename(os.path.join(path, file), os.path.join(path, newfilename))
 
 
-path = '/home/trent/data/temp/'
+# path = '/home/trent/data/temp/'
 # path = '/home/trent/data/for'
+path = 'D:\\temp\\'
 
 # date = time.strftime('%Y%m%d%H%M%S')
 prefix = time.strftime('%Y%m%d%H%M%S')
