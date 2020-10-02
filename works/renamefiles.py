@@ -17,6 +17,7 @@ def renameFiles(path, prefix):
 # path = '/home/trent/data/temp/'
 # path = '/home/trent/data/for'
 path = 'D:\\temp\\'
+# path = 'D:\\clips\\'
 
 # date = time.strftime('%Y%m%d%H%M%S')
 prefix = time.strftime('%Y%m%d%H%M%S')
